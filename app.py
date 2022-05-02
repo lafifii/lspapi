@@ -2,7 +2,7 @@ import flask
 from flask import request
 
 import cv2
-
+import mediapipe
 
 app = flask.Flask(__name__)
 
