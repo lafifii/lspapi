@@ -1,10 +1,7 @@
 flask
 mediapipe
-opencv-python
-opencv-contrib-python
+opencv-contrib-python-headless
 numpy
 google-api-python-client
 boto3
 gunicorn
-sklearn 
-requests
