@@ -2,7 +2,6 @@ import flask
 from flask import request
 
 import mediapipe as mp
-import cv2
 import numpy as np
 
 from google.api_core.client_options import ClientOptions
