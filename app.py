@@ -103,7 +103,4 @@ def home():
     object_name = request.args['objectname']
     file_name = request.args['filename']
 
-    s3 = boto3.client('s3', aws_access_key_id='AKIA4LNJ7XU4LJXKSYEX' , aws_secret_access_key='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')
-    s3.download_file(bucket_name, object_name, file_name)
-    
-    return predictVideo(file_name, classes)
+    return 'hi'
