@@ -1,16 +1,6 @@
 import flask 
 from flask import request
 
-import mediapipe as mp
-import numpy as np
-
-from google.api_core.client_options import ClientOptions
-import googleapiclient.discovery
-
-import googleapiclient.discovery
-
-import boto3
-
 
 app = flask.Flask(__name__)
 
