@@ -1,6 +1,8 @@
 import flask 
 from flask import request
 
+import cv2
+
 
 app = flask.Flask(__name__)
 
