@@ -1,7 +1,7 @@
 flask
 mediapipe
-opencv-contrib-python-headless
-numpy
 google-api-python-client
 boto3
 gunicorn
+opencv-python
+numpy
