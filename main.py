@@ -1,3 +1,4 @@
+from importlib.resources import path
 import json
 import mediapipe as mp
 import cv2
@@ -15,6 +16,7 @@ import googleapiclient.discovery
 
 app = Flask(__name__)
 GOOGLE_APPLICATION_CREDENTIALS = 'lsp-app-4dbf8-21f5035508f6.json'
+BUCKET_NAME = 'lspvideosbucket'
 
 def mediapipe_detection(image, model): # deteccion de mediapipe
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) 
@@ -52,8 +54,8 @@ def predict_json(project, region, model, instances, version=None):
 
   return response['predictions']
 
-def predictVideo(pathIn, classes): 
-  url = 'https://storage.googleapis.com/lspvideosbucket/' + pathIn
+def predictVideo(userID, pathIn, pathOut, localPath,  classes): 
+  url = 'https://storage.googleapis.com/' + BUCKET_NAME + '/' + pathIn
 
   mp_holistic = mp.solutions.holistic 
   
@@ -89,19 +91,42 @@ def predictVideo(pathIn, classes):
       cnt+=1
   
   storage_client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
-  bucket = storage_client.bucket("lspvideosbucket")
-  blob = bucket.blob('ans' + pathIn)
+  bucket = storage_client.bucket(BUCKET_NAME)
+  blob = bucket.blob(pathOut)
 
-  st = ' '.join(sentence)
-  blob.upload_from_string(st)  
+  info = {
+    'userID' : userID,
+    'localPath': localPath,
+    'title': pathIn,
+    'translation': sentence
+  }
 
-@app.route('/', methods=['GET'])
+  blob.upload_from_string(json.dumps(info))  
+
+@app.route('/', methods=['POST', 'GET'])
 def welcome():
-  classes = np.array( [ "Alergia", "Baño", "Bien", "Dolor", "Donde", "Gracias", "Hora"])
+  if request.method == 'POST':
+    classes = np.array( [ "Alergia", "Baño", "Bien", "Dolor", "Donde", "Gracias", "Hora"])
+    content = request.json
+    
+    localPath = content['localPath']
+    userID = content['userID']
+    
+    title = userID + '/videos/' + content['title']
+    translation = userID + '/translations/' + content['title'] 
+    
+    predictVideo(userID, title, translation, localPath, classes)
+    
+    return "Subiendo traduccion  a " + translation
   
-  predictVideo(request.args['file'],classes)
-
-  return json.dumps({"traduccion" : ["Alergia", "Alergia", "Alergia"]})
+  else:
+    translations = []
+    pathUser = '/' + request.args['userID'] + '/translations'
+    storage_client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
+    for blob in storage_client.list_blobs(BUCKET_NAME, prefix=pathUser):
+      translations.append(str(blob))
+    
+    return json.dumps({'translations' : translations})
   
 if __name__ == '__main__':
   app.run()
