@@ -98,6 +98,9 @@ def predictVideo(pathIn, classes):
 @app.route('/', methods=['GET'])
 def welcome():
   classes = np.array( [ "Alergia", "Baño", "Bien", "Dolor", "Donde", "Gracias", "Hora"])
+  
+  predictVideo(request.args['file'],classes)
+
   return json.dumps({"traduccion" : ["Alergia", "Alergia", "Alergia"]})
   
 if __name__ == '__main__':
