@@ -1,4 +1,8 @@
 flask
-gunicorn
-opencv-contrib-python-headless
 mediapipe
+opencv-python
+google-cloud-storage
+google-api-python-client
+Flask-Threads
+gunicorn
+celery
