@@ -120,10 +120,10 @@ def welcome():
   
   else:
     translations = []
-    pathUser = '/' + request.args['userID'] + '/translations'
+    pathUser = request.args['userID'] + '/translations'
     storage_client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
     for blob in storage_client.list_blobs(BUCKET_NAME, prefix=pathUser):
-      translations.append(str(blob))
+      translations.append(blob.name)
     
     return json.dumps({'translations' : translations})
   
