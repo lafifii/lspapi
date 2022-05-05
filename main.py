@@ -54,7 +54,7 @@ def predict_json(project, region, model, instances, version=None):
 
   return response['predictions']
 
-def predictVideo(userID, pathIn, pathOut, localPath,  classes): 
+def predictVideo(userID, pathIn, pathOut, title,  classes): 
   url = 'https://storage.googleapis.com/' + BUCKET_NAME + '/' + pathIn
 
   mp_holistic = mp.solutions.holistic 
@@ -96,8 +96,8 @@ def predictVideo(userID, pathIn, pathOut, localPath,  classes):
 
   info = {
     'userID' : userID,
-    'localPath': localPath,
-    'title': pathIn,
+    'title': title,
+    'fileName': pathIn,
     'translation': sentence
   }
 
@@ -109,15 +109,14 @@ def welcome():
     classes = np.array( [ "Alergia", "Baño", "Bien", "Dolor", "Donde", "Gracias", "Hora"])
     content = request.json
     
-    localPath = content['localPath']
     userID = content['userID']
+    file_name = userID + '/videos/' + content['fileName']
+    file_translation = userID + '/translations/' + content['fileName'] 
+    title = content['title']
     
-    title = userID + '/videos/' + content['title']
-    translation = userID + '/translations/' + content['title'] 
+    predictVideo(userID, file_name, file_translation, title, classes)
     
-    predictVideo(userID, title, translation, localPath, classes)
-    
-    return "Subiendo traduccion  a " + translation
+    return "Subiendo traduccion  a " + file_translation
   
   else:
     translations = []
