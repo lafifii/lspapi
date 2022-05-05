@@ -81,13 +81,12 @@ def predictVideo(userID, pathIn, pathOut, title,  classes):
       if(results):
         keypoints = get_keypoints(results)
         sequence.append(keypoints)
-      
-      sequence = sequence[-30:]
 
       if len(sequence) == 30:
         res = np.expand_dims(sequence, axis=0)
         pred = predict_json('lsp-app-4dbf8', 'us-central1', 'lspmodel', res.tolist())
         sentence.append(classes[np.argmax(pred)])
+        sequence = []
       
       cnt+=1
   
