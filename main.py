@@ -4,6 +4,7 @@ import mediapipe as mp
 import cv2
 import numpy as np
 import json
+import requests
 
 from google.cloud import storage
 from google.api_core.client_options import ClientOptions
@@ -123,9 +124,12 @@ def welcome():
     pathUser = request.args['userID'] + '/translations'
     storage_client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
     for blob in storage_client.list_blobs(BUCKET_NAME, prefix=pathUser):
-      translations.append(blob.name)
+      name = blob.name
+      url = 'https://storage.googleapis.com/' + BUCKET_NAME + '/' + name
+      source = requests.get(url).json()
+      translations.append(source)
     
-    return json.dumps({'translations' : translations})
+    return json.dumps(translations)
   
 if __name__ == '__main__':
   app.run()
